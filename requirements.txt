@@ -1,0 +1,2 @@
+git+https://github.com/Shinyhero36/Leboncoin-API-Wrapper.git#egg=leboncoin_api_wrapper
+docopt
