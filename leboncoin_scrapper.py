@@ -108,7 +108,7 @@ def search(lbc, queries, min_price=None, max_price=None):
     if min_price:
         lbc.minPrice(min_price)
     for i, query in enumerate(ensure_list(queries)):
-        lbc.searchFor(query)
+        lbc.searchFor(query, autoCatgory=False)
         result = lbc.execute()
         if result._:
             results.append(result._)
