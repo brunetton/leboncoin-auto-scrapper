@@ -12,12 +12,13 @@ Options:
 import json
 import time
 from pathlib import Path
-from requests import get
+
 import yaml
-
-from leboncoin_api_wrapper import Leboncoin
 from docopt import docopt
-
+from leboncoin_api_wrapper import Leboncoin
+from requests import Session, exceptions, get
+from requests.adapters import HTTPAdapter
+from requests.packages.urllib3.util import Retry
 
 SEEN_FILEPATH = Path('already_seen_ads.json')
 CONFIG_FILE = Path('config.yml')
@@ -32,6 +33,14 @@ with open(CONFIG_FILE) as f:
 
 
 def main():
+    requests_session = Session()
+    # http://www.coglib.com/~icordasc/blog/2014/12/retries-in-requests.html
+    # backoff_factor=2 will make sleep for 2 * (2 ^ (retry_number - 1)), ie 0, 2, 4, 8, 16, 32 ... up to 1 hour (for total=12)
+    # method_whitelist=False makes retry for GET and POST (https://urllib3.readthedocs.io/en/latest/reference/urllib3.util.html)
+    requests_retry = Retry(total=4, backoff_factor=3, status_forcelist=[500], method_whitelist=False)  # retry when server return ont of this statuses
+    requests_session.mount('http://', HTTPAdapter(max_retries=requests_retry))
+    requests_session.mount('https://', HTTPAdapter(max_retries=requests_retry))
+
     try:
         scrap()
     except:
