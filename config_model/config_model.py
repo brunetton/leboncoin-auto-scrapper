@@ -20,7 +20,7 @@ class Location(StrictModel):
         match = re.search(r'(\d+(?:\.\d+)?), *(\d+(?:\.\d+)?)', v)
         if not match:
             raise ValueError('Unexpected gps coords format')
-        return {'lat': match.group(1), 'long': match.group(2)}
+        return {'lat': float(match.group(1)), 'long': float(match.group(2))}
 
 
 class Search(StrictModel):
