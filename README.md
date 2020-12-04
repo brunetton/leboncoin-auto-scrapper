@@ -14,5 +14,4 @@ Then edit `config.yml` file
 
 ## TODO
 
-- per-search price range, or something like searches groups with prices ranges
 - regex filter on results titles (to blacklist some type of ads typically)
