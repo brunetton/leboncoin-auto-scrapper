@@ -41,10 +41,6 @@ with open(CONFIG_FILE) as f:
 import logging
 log = logging.getLogger(__name__)
 logging.basicConfig(format="%(levelname)s: %(message)s", level=(logging.DEBUG if args['--debug'] else logging.INFO))
-logging.basicConfig(
-    level=logging.DEBUG,
-    format = "%(asctime)s,%(msecs)03d %(levelname)-5.5s [%(name)s:%(funcName)s line %(lineno)d] %(message)s"
-)
 
 
 def main():
@@ -65,7 +61,7 @@ def main():
         raise
 
 
-def scrap():
+def scrap(config=config, log=log):
     if not SEEN_FILEPATH.exists():
         raise Exception(f'init "{SEEN_FILEPATH}" file before use.')
 
@@ -76,7 +72,7 @@ def scrap():
 
     # do the requests
     lbc = Leboncoin()
-    results = search(lbc, config.searches)
+    results = search(lbc, config.searches, log=log)
 
     # iterate results, filter and print in console
     ids = set()
@@ -122,9 +118,10 @@ def write_json_file(file_path, data):
         json.dump(data, file_, ensure_ascii=False)
 
 
-def search(lbc, queries):
+def search(lbc, queries, log):
     results = []
     for i, query in enumerate(queries):
+        log.debug(f"query: {query.dict()!r}")
         if query.price:
             if query.price['min']:
                 lbc.minPrice(query.price['min'])
@@ -135,6 +132,7 @@ def search(lbc, queries):
                 lat=query.location.gps['lat'], lng=query.location.gps['long'], radius=query.location.radius)
         # for each term of the current query
         for j, term in enumerate(query.terms):
+            log.info(f" - term: {term!r}")
             lbc.searchFor(term, autoCatgory=False)
             result = lbc.execute()
             log.debug(f'-> search {term!r}')
@@ -158,4 +156,5 @@ def is_shippable(item):
     return shippable_attr and shippable_attr[0]['value'] == 'true'
 
 
-main()
+if __name__ == '__main__':
+    main()
