@@ -1,4 +1,4 @@
-git+https://github.com/Shinyhero36/Leboncoin-API-Wrapper.git@483accb5b5eed0#egg=leboncoin_api_wrapper
+git+https://github.com/Shinyhero36/Leboncoin-API-Wrapper.git@50ff8b442a01#egg=leboncoin_api_wrapper
 docopt
 requests
 pyyaml

@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!python3
 # -*- coding: utf-8 -*-
 
 """
@@ -138,8 +138,8 @@ def search(lbc, queries):
             lbc.searchFor(term, autoCatgory=False)
             result = lbc.execute()
             log.debug(f'-> search {term!r}')
-            if result._:
-                results.append(result._)
+            if result:
+                results.append(result)
             # Do we need to sleep ? (we do if we are not at the last term of the last search)
             if is_last_one(i, queries) or is_last_one(j, query.terms):
                 log.debug("sleep")
