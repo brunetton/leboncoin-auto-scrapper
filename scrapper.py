@@ -101,4 +101,4 @@ def is_shippable(item):
 
 def send_sms(sms, config):
     if config.sms_url:
-        get(config.config.sms_url.format(sms))
+        get(config.sms_url.format(sms))
