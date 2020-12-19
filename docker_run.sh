@@ -1,0 +1,1 @@
+docker run --rm -v $PWD/config.yml:/app/config.yml -v $PWD/already_seen_ads.json:/app/already_seen_ads.json -it leboncoin-scrapper
