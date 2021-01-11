@@ -18,7 +18,7 @@ requests_session.mount('http://', HTTPAdapter(max_retries=requests_retry))
 requests_session.mount('https://', HTTPAdapter(max_retries=requests_retry))
 
 
-def scrap(config, log, already_seen_set=set()):
+def scrap(config, log, already_seen_set=set(), send_sms=True):
     """Return:
         - results list
         - newly seen IDs
@@ -44,11 +44,10 @@ def scrap(config, log, already_seen_set=set()):
                     msg = f"{price}€ - {res['url']} - {res['subject']}{shipp_str}"
                     print(f"{seen_str} {res['first_publication_date']} {msg}")
                     if not already_seen:
-                        print("=> SMS")
                         sms.append(f"- {msg}")
                     ids.add(_id)
     # SMS
-    if sms:
+    if sms and send_sms:
         sms = "\n".join(sms).replace(' ', '%20')
         send_sms(sms, config)
 

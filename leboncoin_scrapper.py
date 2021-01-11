@@ -8,6 +8,7 @@ Usage:
 Options:
     -c --config             config file to use (config.yml by default)
     -t --test               do not catch exception (and do not send sms in case of exceptions)
+    --no-sms                do not send any sms
     --debug                 show debug messages
 """
 
@@ -53,16 +54,16 @@ def main():
             already_seen_set = set(ensure_list(json.load(f)))
 
     try:
-        _, new_ids_set = scrapper.scrap(config, log, already_seen_set=already_seen_set)
+        _, new_ids_set = scrapper.scrap(config, log, already_seen_set=already_seen_set, send_sms=not args["--no-sms"])
     except:
-        if not args["--test"]:
+        if (not args["--test"]) or args["--no-sms"]:
             scrapper.send_sms("EXCEPTION", config)
         raise
-
-    # Write new found ids to seen file
-    if new_ids_set:
-        print(f'-> update {SEEN_FILEPATH!r}')
-        write_json_file(SEEN_FILEPATH, list(already_seen_set | new_ids_set))
+    finally:
+        # Write new found ids to seen file
+        if new_ids_set:
+            print(f'-> update {SEEN_FILEPATH!r}')
+            write_json_file(SEEN_FILEPATH, list(already_seen_set | new_ids_set))
 
 
 if __name__ == '__main__':
