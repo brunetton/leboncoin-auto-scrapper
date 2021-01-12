@@ -56,7 +56,7 @@ def main():
     try:
         _, new_ids_set = scrapper.scrap(config, log, already_seen_set=already_seen_set, send_sms=not args["--no-sms"])
     except:
-        if (not args["--test"]) or args["--no-sms"]:
+        if not args["--test"] and not args["--no-sms"]:
             scrapper.send_sms("EXCEPTION", config)
         raise
     finally:
