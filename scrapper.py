@@ -22,6 +22,7 @@ def scrap(config, log, already_seen_set=set(), send_sms=True):
     """Return:
         - results list
         - newly seen IDs
+        - list of urls
     """
 
     # do the requests
@@ -31,6 +32,7 @@ def scrap(config, log, already_seen_set=set(), send_sms=True):
     # iterate results, filter and print in console
     ids = set()
     sms = []
+    urls = []
     for result in results:
         if result['total'] > 0:
             for res in result['ads']:
@@ -46,13 +48,14 @@ def scrap(config, log, already_seen_set=set(), send_sms=True):
                     if not already_seen:
                         sms.append(f"- {msg}")
                     ids.add(_id)
+                    urls.append(res['url'])
     # SMS
     if sms and send_sms:
         sms = "\n".join(sms).replace(' ', '%20')
         send_sms(sms, config)
 
     # Write ids to file
-    return results, ids - already_seen_set
+    return results, ids - already_seen_set, urls
 
 
 def search(lbc, queries, log):

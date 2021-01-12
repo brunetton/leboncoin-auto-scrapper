@@ -9,12 +9,14 @@ Options:
     -c --config             config file to use (config.yml by default)
     -t --test               do not catch exception (and do not send sms in case of exceptions)
     --no-sms                do not send any sms
+    --clipboard             copy all links to clipboard
     --debug                 show debug messages
 """
 
 import json
 import logging
 import sys
+import traceback
 from pathlib import Path
 
 import yaml
@@ -24,7 +26,6 @@ sys.path.append(str(Path(__file__).parent.absolute()))
 import config_model
 import scrapper
 from common import ensure_list, write_json_file
-
 
 SEEN_FILEPATH = Path('already_seen_ads.json')
 DEFAULT_CONFIG_FILE = Path(__file__).parent / 'config.yml'
@@ -54,7 +55,7 @@ def main():
             already_seen_set = set(ensure_list(json.load(f)))
 
     try:
-        _, new_ids_set = scrapper.scrap(config, log, already_seen_set=already_seen_set, send_sms=not args["--no-sms"])
+        _, new_ids_set, links = scrapper.scrap(config, log, already_seen_set=already_seen_set, send_sms=not args["--no-sms"])
     except:
         if not args["--test"] and not args["--no-sms"]:
             scrapper.send_sms("EXCEPTION", config)
@@ -64,6 +65,16 @@ def main():
         if new_ids_set:
             print(f'-> update {SEEN_FILEPATH!r}')
             write_json_file(SEEN_FILEPATH, list(already_seen_set | new_ids_set))
+        if args['--clipboard']:
+            # Copy urls links to clipboard
+            import clipboard
+            try:
+                clipboard.copy("\n".join(links))
+            except Exception as e:
+                log.error(f"Error while copying to clipboard:\n{e}")
+                traceback.print_tb(e.__traceback__)
+            else:
+                log.info("URLs copied to clipboard")
 
 
 if __name__ == '__main__':

@@ -6,6 +6,8 @@ This script is quick'n dirty, probably not really maintainable and not adapted t
 
 ## Install
 
+To make clipboard copy works, install `xclip`
+
     pip install -r requirements.txt
     cp config.yml.tpl config.yml
     touch already_seen_ads.json
