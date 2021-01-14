@@ -3,10 +3,9 @@
 
 """
 Usage:
-    {self_filename} [options]
+    {self_filename} [options] [<config_file>]
 
 Options:
-    -c --config             config file to use (config.yml by default)
     -t --test               do not catch exception (and do not send sms in case of exceptions)
     --no-sms                do not send any sms
     --clipboard             copy all links to clipboard
@@ -36,7 +35,7 @@ def main():
     args = docopt(__doc__.format(self_filename=Path(__file__).name))
 
     # Parse config file
-    with open(args['--config'] or DEFAULT_CONFIG_FILE) as f:
+    with open(args['<config_file>'] or DEFAULT_CONFIG_FILE) as f:
         config_yaml = yaml.load(f.read(), Loader=yaml.BaseLoader)
         config = config_model.Config(**config_yaml)
 
@@ -54,6 +53,7 @@ def main():
         with open(SEEN_FILEPATH) as f:
             already_seen_set = set(ensure_list(json.load(f)))
 
+    new_ids_set = links = None
     try:
         _, new_ids_set, links = scrapper.scrap(config, log, already_seen_set=already_seen_set, send_sms=not args["--no-sms"])
     except:
@@ -65,7 +65,7 @@ def main():
         if new_ids_set:
             print(f'-> update {SEEN_FILEPATH!r}')
             write_json_file(SEEN_FILEPATH, list(already_seen_set | new_ids_set))
-        if args['--clipboard']:
+        if args['--clipboard'] and links:
             # Copy urls links to clipboard
             import clipboard
             try:
