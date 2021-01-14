@@ -18,7 +18,7 @@ class StrictModel(BaseModel):
 
 class Location(StrictModel):
     gps: nonEmptyString
-    radius: conint(gt=10)
+    radius: conint(ge=10)
 
     @validator('gps')
     def extract_lon_lat(cls, v):
