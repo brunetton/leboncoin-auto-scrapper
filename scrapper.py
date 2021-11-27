@@ -7,6 +7,8 @@ from requests import Session, exceptions, get
 from requests.adapters import HTTPAdapter
 from requests.packages.urllib3.util import Retry
 
+from common import ensure_list
+
 
 requests_session = Session()
 # http://www.coglib.com/~icordasc/blog/2014/12/retries-in-requests.html
@@ -83,11 +85,12 @@ def search(lbc, queries, log):
 
 
 def iter_terms_and_locations(query):
+    terms = ensure_list(query.terms)
     if query.location:
         # If location given, do the cartesian product of terms and locations
-        yield from itertools.product(query.terms, query.location)
+        yield from itertools.product(terms, query.location)
     else:
-        yield from ((term, None) for term in query.terms)
+        yield from ((term, None) for term in terms)
 
 
 def is_last_one(i, _list):
