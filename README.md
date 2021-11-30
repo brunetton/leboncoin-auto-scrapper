@@ -1,3 +1,7 @@
+## UPDATE november 2021
+
+This script **does not works** anymore, as Leboncoin now use DataDome protection against bots.
+
 ## Simple Leboncoin scrapper and SMS alert
 
 Simple use of https://github.com/Shinyhero36/Leboncoin-API-Wrapper to periodically check for Leboncoin ads and alert by sms using a custom sms API when something new is found.
